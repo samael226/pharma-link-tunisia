@@ -112,12 +112,10 @@ function PatientDash() {
             <li key={r.id} className="py-3 flex items-center justify-between gap-3">
               <div className="min-w-0">
                 <div className="font-medium truncate">
-                  {/* @ts-expect-error supabase relational typing */}
-                  {r.medicine?.brand_name}
+                  {(r as unknown as { medicine?: { brand_name?: string } }).medicine?.brand_name}
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  {/* @ts-expect-error supabase relational typing */}
-                  {r.branch?.name} · {r.branch?.city} · qty {r.quantity}
+                  {(r as unknown as { branch?: { name?: string; city?: string } }).branch?.name} · {(r as unknown as { branch?: { city?: string } }).branch?.city} · qty {r.quantity}
                 </div>
               </div>
               <Badge variant={r.status === "fulfilled" ? "default" : "secondary"} className="capitalize">{r.status}</Badge>

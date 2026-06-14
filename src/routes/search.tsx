@@ -9,9 +9,10 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Search as SearchIcon, MapPin, Package } from "lucide-react";
+import { Search as SearchIcon, MapPin, Package, Navigation } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
+import { PharmacyMap, distanceKm, type MapBranch } from "@/components/site/PharmacyMap";
 
 const searchSchema = z.object({ q: z.string().optional() });
 
@@ -41,6 +42,8 @@ type InventoryRow = {
     governorate: string;
     address: string;
     is_24_7: boolean;
+    latitude: number | null;
+    longitude: number | null;
     pharmacy: { name: string } | null;
   } | null;
 };
@@ -104,7 +107,7 @@ function SearchPage() {
             )}
             {isLoading && <div className="px-2 py-8 text-sm text-muted-foreground">{t("common.loading")}</div>}
             {!isLoading && medicines && medicines.length === 0 && debouncedQ.trim() !== "" && (
-              <div className="px-2 py-8 text-sm text-muted-foreground text-center">Aucun médicament trouvé. Le catalogue se remplit progressivement.</div>
+              <div className="px-2 py-8 text-sm text-muted-foreground text-center">Aucun médicament trouvé.</div>
             )}
             <ul className="space-y-1">
               {medicines?.map((m) => (
@@ -139,12 +142,16 @@ function SearchPage() {
 
 function AvailabilityPanel({ medicine }: { medicine: MedicineRow }) {
   const { user } = useAuth();
+  const [userPos, setUserPos] = useState<{ lat: number; lng: number } | null>(null);
+  const [selectedBranchId, setSelectedBranchId] = useState<string | null>(null);
+  const [nearbyOnly, setNearbyOnly] = useState(false);
+
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["inventory", medicine.id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("inventory")
-        .select(`id, quantity, price_tnd, branch:branches(id, name, city, governorate, address, is_24_7, pharmacy:pharmacies(name))`)
+        .select(`id, quantity, price_tnd, branch:branches(id, name, city, governorate, address, is_24_7, latitude, longitude, pharmacy:pharmacies(name))`)
         .eq("medicine_id", medicine.id)
         .gt("quantity", 0)
         .limit(50);
@@ -152,6 +159,48 @@ function AvailabilityPanel({ medicine }: { medicine: MedicineRow }) {
       return (data ?? []) as unknown as InventoryRow[];
     },
   });
+
+  const enriched = useMemo(() => {
+    const rows = (data ?? []).filter((r) => r.branch);
+    const withDist = rows.map((r) => ({
+      ...r,
+      distance:
+        userPos && r.branch?.latitude != null && r.branch?.longitude != null
+          ? distanceKm(userPos, { lat: r.branch.latitude, lng: r.branch.longitude })
+          : null,
+    }));
+    if (userPos) withDist.sort((a, b) => (a.distance ?? 1e9) - (b.distance ?? 1e9));
+    return nearbyOnly && userPos ? withDist.filter((r) => (r.distance ?? Infinity) <= 10) : withDist;
+  }, [data, userPos, nearbyOnly]);
+
+  const mapBranches: MapBranch[] = useMemo(
+    () =>
+      enriched
+        .filter((r) => r.branch?.latitude != null && r.branch?.longitude != null)
+        .map((r) => ({
+          id: r.branch!.id,
+          name: r.branch!.name,
+          city: r.branch!.city,
+          address: r.branch!.address,
+          latitude: r.branch!.latitude,
+          longitude: r.branch!.longitude,
+          pharmacy_name: r.branch!.pharmacy?.name ?? null,
+          badge: r.branch!.is_24_7 ? "Ouvert 24/7" : undefined,
+        })),
+    [enriched],
+  );
+
+  const locate = () => {
+    if (!navigator.geolocation) {
+      toast.error("Géolocalisation non supportée.");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (p) => setUserPos({ lat: p.coords.latitude, lng: p.coords.longitude }),
+      () => toast.error("Impossible d'obtenir votre position."),
+      { enableHighAccuracy: false, timeout: 8000 },
+    );
+  };
 
   const reserve = async (branchId: string) => {
     if (!user) {
@@ -173,31 +222,54 @@ function AvailabilityPanel({ medicine }: { medicine: MedicineRow }) {
 
   return (
     <Card className="p-6">
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
           <div className="text-xs uppercase tracking-wide text-muted-foreground">{medicine.category ?? "Médicament"}</div>
           <h2 className="text-2xl font-bold mt-1">{medicine.brand_name}</h2>
           <div className="text-sm text-muted-foreground">{medicine.generic_name} {medicine.dosage ? `· ${medicine.dosage}` : ""}</div>
         </div>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={locate}>
+            <Navigation className="h-4 w-4 me-1.5" />{userPos ? "Position OK" : "Me localiser"}
+          </Button>
+          {userPos && (
+            <Button variant={nearbyOnly ? "default" : "outline"} size="sm" onClick={() => setNearbyOnly((v) => !v)}>
+              ≤ 10 km
+            </Button>
+          )}
+        </div>
       </div>
 
       <div className="mt-6">
-        <div className="text-sm font-semibold mb-3">Pharmacies disponibles</div>
+        <PharmacyMap branches={mapBranches} selectedId={selectedBranchId} onSelect={setSelectedBranchId} height={320} />
+      </div>
+
+      <div className="mt-6">
+        <div className="text-sm font-semibold mb-3">Pharmacies disponibles ({enriched.length})</div>
         {isLoading && <div className="text-sm text-muted-foreground">Recherche…</div>}
-        {!isLoading && (!data || data.length === 0) && (
+        {!isLoading && enriched.length === 0 && (
           <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
-            Aucun stock disponible actuellement. Les pharmacies du réseau seront alertées.
+            Aucun stock disponible. Les pharmacies du réseau seront alertées.
           </div>
         )}
         <ul className="space-y-2">
-          {data?.map((row) => (
-            <li key={row.id} className="flex items-center justify-between gap-3 rounded-lg border p-3.5">
+          {enriched.map((row) => (
+            <li
+              key={row.id}
+              onMouseEnter={() => setSelectedBranchId(row.branch!.id)}
+              className={`flex items-center justify-between gap-3 rounded-lg border p-3.5 transition-colors ${
+                selectedBranchId === row.branch?.id ? "border-primary bg-primary-soft/40" : ""
+              }`}
+            >
               <div className="min-w-0">
                 <div className="font-medium truncate">{row.branch?.pharmacy?.name ?? row.branch?.name}</div>
                 <div className="text-xs text-muted-foreground flex items-center gap-1.5 mt-0.5">
                   <MapPin className="h-3 w-3 shrink-0" />
                   <span className="truncate">{row.branch?.address}, {row.branch?.city}</span>
                   {row.branch?.is_24_7 && <Badge variant="secondary" className="ms-1 text-[10px]">24/7</Badge>}
+                  {row.distance != null && (
+                    <Badge variant="outline" className="ms-1 text-[10px]">{row.distance.toFixed(1)} km</Badge>
+                  )}
                 </div>
               </div>
               <div className="text-end shrink-0">

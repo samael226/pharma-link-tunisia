@@ -13,6 +13,7 @@ import { Route as SearchRouteImport } from './routes/search'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as OwnerOnboardingRouteImport } from './routes/owner.onboarding'
 
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
@@ -34,18 +35,25 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OwnerOnboardingRoute = OwnerOnboardingRouteImport.update({
+  id: '/owner/onboarding',
+  path: '/owner/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
   '/search': typeof SearchRoute
+  '/owner/onboarding': typeof OwnerOnboardingRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
   '/search': typeof SearchRoute
+  '/owner/onboarding': typeof OwnerOnboardingRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +61,20 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
   '/search': typeof SearchRoute
+  '/owner/onboarding': typeof OwnerOnboardingRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/dashboard' | '/search'
+  fullPaths: '/' | '/auth' | '/dashboard' | '/search' | '/owner/onboarding'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/dashboard' | '/search'
-  id: '__root__' | '/' | '/auth' | '/dashboard' | '/search'
+  to: '/' | '/auth' | '/dashboard' | '/search' | '/owner/onboarding'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/search'
+    | '/owner/onboarding'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +82,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   DashboardRoute: typeof DashboardRoute
   SearchRoute: typeof SearchRoute
+  OwnerOnboardingRoute: typeof OwnerOnboardingRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +115,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/owner/onboarding': {
+      id: '/owner/onboarding'
+      path: '/owner/onboarding'
+      fullPath: '/owner/onboarding'
+      preLoaderRoute: typeof OwnerOnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +130,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   DashboardRoute: DashboardRoute,
   SearchRoute: SearchRoute,
+  OwnerOnboardingRoute: OwnerOnboardingRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

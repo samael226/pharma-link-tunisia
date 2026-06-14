@@ -95,11 +95,16 @@ function PatientDash() {
       </div>
 
       <Card className="mt-8 p-6">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="text-lg font-semibold">Mes réservations</h2>
-          <Button size="sm" onClick={() => navigate({ to: "/search" })}>
-            <Search className="h-4 w-4 me-2" />Nouvelle recherche
-          </Button>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" onClick={() => navigate({ to: "/owner/onboarding" })}>
+              <Building2 className="h-4 w-4 me-2" />Je suis pharmacien
+            </Button>
+            <Button size="sm" onClick={() => navigate({ to: "/search" })}>
+              <Search className="h-4 w-4 me-2" />Nouvelle recherche
+            </Button>
+          </div>
         </div>
         {!reservations?.length && (
           <div className="text-center py-12 text-muted-foreground">
@@ -144,34 +149,85 @@ function PharmacistDash() {
 }
 
 function OwnerDash() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { data } = useQuery({
+    queryKey: ["owner-overview", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data: pharmacy } = await supabase
+        .from("pharmacies")
+        .select("id, name, status")
+        .eq("owner_id", user!.id)
+        .maybeSingle();
+      if (!pharmacy) return { pharmacy: null, branches: 0 };
+      const { count } = await supabase
+        .from("branches")
+        .select("id", { count: "exact", head: true })
+        .eq("pharmacy_id", pharmacy.id);
+      return { pharmacy, branches: count ?? 0 };
+    },
+  });
+
+  const status = data?.pharmacy?.status as ("pending" | "approved" | "suspended" | undefined);
+
   return (
     <>
       <div className="grid gap-4 sm:grid-cols-4">
-        <StatCard icon={Building2} label="Succursales" value={0} />
+        <StatCard icon={Building2} label="Succursales" value={data?.branches ?? 0} />
         <StatCard icon={Users} label="Employés" value={0} />
         <StatCard icon={Package} label="Stock total" value={0} />
-        <StatCard icon={Pill} label="Ventes (mois)" value="0 TND" />
+        <StatCard icon={Pill} label="Statut" value={status ?? "—"} />
       </div>
-      <Card className="mt-8 p-10 text-center text-muted-foreground">
-        Console propriétaire — Tableaux multi-branches et analytics financiers arrivent dans la prochaine itération.
+      <Card className="mt-8 p-6">
+        {!data?.pharmacy ? (
+          <div className="text-center py-6">
+            <Building2 className="h-10 w-10 mx-auto opacity-40" />
+            <p className="mt-3 text-sm text-muted-foreground">
+              Enregistrez votre pharmacie pour rejoindre le réseau PharmaLink.
+            </p>
+            <Button className="mt-4" onClick={() => navigate({ to: "/owner/onboarding" })}>
+              Devenir partenaire
+            </Button>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <div>
+              <div className="font-semibold">{data.pharmacy.name}</div>
+              <div className="text-sm text-muted-foreground">
+                {status === "approved"
+                  ? "Pharmacie active sur le réseau."
+                  : status === "pending"
+                    ? "En attente de validation par l'administration."
+                    : "Compte suspendu."}
+              </div>
+            </div>
+            <Button variant="outline" onClick={() => navigate({ to: "/owner/onboarding" })}>
+              Gérer la pharmacie
+            </Button>
+          </div>
+        )}
       </Card>
     </>
   );
 }
 
 function AdminDash() {
+  const navigate = useNavigate();
   const stats = useQuery({
     queryKey: ["admin-stats"],
     queryFn: async () => {
-      const [pharmacies, medicines, branches] = await Promise.all([
+      const [pharmacies, medicines, branches, pending] = await Promise.all([
         supabase.from("pharmacies").select("id", { count: "exact", head: true }),
         supabase.from("medicines").select("id", { count: "exact", head: true }),
         supabase.from("branches").select("id", { count: "exact", head: true }),
+        supabase.from("pharmacies").select("id", { count: "exact", head: true }).eq("status", "pending"),
       ]);
       return {
         pharmacies: pharmacies.count ?? 0,
         medicines: medicines.count ?? 0,
         branches: branches.count ?? 0,
+        pending: pending.count ?? 0,
       };
     },
   });
@@ -182,10 +238,18 @@ function AdminDash() {
         <StatCard icon={Building2} label="Pharmacies" value={stats.data?.pharmacies ?? "…"} />
         <StatCard icon={Building2} label="Succursales" value={stats.data?.branches ?? "…"} />
         <StatCard icon={Pill} label="Médicaments" value={stats.data?.medicines ?? "…"} />
-        <StatCard icon={ShieldCheck} label="Niveau sécurité" value="A+" />
+        <StatCard icon={ShieldCheck} label="En attente" value={stats.data?.pending ?? "…"} />
       </div>
-      <Card className="mt-8 p-10 text-center text-muted-foreground">
-        Console administration — Approbations, modération et audit logs arrivent dans la prochaine itération.
+      <Card className="mt-8 p-6 flex items-center justify-between gap-3 flex-wrap">
+        <div>
+          <div className="font-semibold">Validation des pharmacies</div>
+          <div className="text-sm text-muted-foreground">
+            Approuvez les nouvelles inscriptions et gérez les comptes existants.
+          </div>
+        </div>
+        <Button onClick={() => navigate({ to: "/admin" })}>
+          <ShieldCheck className="h-4 w-4 me-2" />Console admin
+        </Button>
       </Card>
     </>
   );

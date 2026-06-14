@@ -456,6 +456,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      bootstrap_first_admin: { Args: never; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -466,6 +467,13 @@ export type Database = {
       is_branch_member: {
         Args: { _branch_id: string; _user_id: string }
         Returns: boolean
+      }
+      set_pharmacy_status: {
+        Args: {
+          _pharmacy_id: string
+          _status: Database["public"]["Enums"]["pharmacy_status"]
+        }
+        Returns: undefined
       }
     }
     Enums: {

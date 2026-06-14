@@ -1,11 +1,12 @@
+/// <reference types="google.maps" />
 import { useEffect, useRef, useState } from "react";
 
 declare global {
   interface Window {
-    google?: typeof google;
     __pharmalinkMapsInit?: () => void;
   }
 }
+
 
 export type MapBranch = {
   id: string;

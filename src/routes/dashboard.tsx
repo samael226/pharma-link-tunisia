@@ -95,11 +95,16 @@ function PatientDash() {
       </div>
 
       <Card className="mt-8 p-6">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="text-lg font-semibold">Mes réservations</h2>
-          <Button size="sm" onClick={() => navigate({ to: "/search" })}>
-            <Search className="h-4 w-4 me-2" />Nouvelle recherche
-          </Button>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" onClick={() => navigate({ to: "/owner/onboarding" })}>
+              <Building2 className="h-4 w-4 me-2" />Je suis pharmacien
+            </Button>
+            <Button size="sm" onClick={() => navigate({ to: "/search" })}>
+              <Search className="h-4 w-4 me-2" />Nouvelle recherche
+            </Button>
+          </div>
         </div>
         {!reservations?.length && (
           <div className="text-center py-12 text-muted-foreground">

@@ -24,9 +24,9 @@ export function Header() {
           <a href="/#features" className="px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             {t("feat.title").split(" ").slice(0, 2).join(" ")}
           </a>
-          <a href="/#pricing" className="px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+          <Link to="/billing" className="px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             {t("price.title").split(" ").slice(0, 2).join(" ")}
-          </a>
+          </Link>
         </nav>
         <div className="flex items-center gap-2">
           <LangSwitcher />

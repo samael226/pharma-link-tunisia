@@ -133,16 +133,24 @@ function PatientDash() {
 }
 
 function PharmacistDash() {
+  const navigate = useNavigate();
   return (
     <>
       <div className="grid gap-4 sm:grid-cols-4">
-        <StatCard icon={Package} label="Références en stock" value={0} />
-        <StatCard icon={Pill} label="Réservations à traiter" value={0} />
-        <StatCard icon={Building2} label="Succursale" value="—" />
-        <StatCard icon={Calendar} label="Expirations < 30j" value={0} />
+        <StatCard icon={Package} label="Console" value="Stock & files" />
+        <StatCard icon={Pill} label="Réservations" value="Inbox" />
+        <StatCard icon={Building2} label="Transferts" value="Inter-pharma" />
+        <StatCard icon={Calendar} label="Expirations" value="90j" />
       </div>
-      <Card className="mt-8 p-10 text-center text-muted-foreground">
-        Console pharmacien — Inventaire, réservations entrantes et transferts arrivent dans la prochaine itération.
+      <Card className="mt-8 p-6 flex items-center justify-between gap-3 flex-wrap">
+        <div>
+          <div className="font-semibold">Console pharmacien</div>
+          <div className="text-sm text-muted-foreground">Gérez l'inventaire, les réservations entrantes et les alertes d'expiration.</div>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => navigate({ to: "/transfers" })}>Transferts</Button>
+          <Button onClick={() => navigate({ to: "/pharmacist" })}>Ouvrir la console</Button>
+        </div>
       </Card>
     </>
   );
@@ -202,9 +210,11 @@ function OwnerDash() {
                     : "Compte suspendu."}
               </div>
             </div>
-            <Button variant="outline" onClick={() => navigate({ to: "/owner/onboarding" })}>
-              Gérer la pharmacie
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => navigate({ to: "/pharmacist" })}>Console</Button>
+              <Button variant="outline" onClick={() => navigate({ to: "/transfers" })}>Transferts</Button>
+              <Button onClick={() => navigate({ to: "/owner/onboarding" })}>Gérer</Button>
+            </div>
           </div>
         )}
       </Card>

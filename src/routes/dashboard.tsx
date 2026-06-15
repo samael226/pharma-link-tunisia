@@ -210,9 +210,11 @@ function OwnerDash() {
                     : "Compte suspendu."}
               </div>
             </div>
-            <Button variant="outline" onClick={() => navigate({ to: "/owner/onboarding" })}>
-              Gérer la pharmacie
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => navigate({ to: "/pharmacist" })}>Console</Button>
+              <Button variant="outline" onClick={() => navigate({ to: "/transfers" })}>Transferts</Button>
+              <Button onClick={() => navigate({ to: "/owner/onboarding" })}>Gérer</Button>
+            </div>
           </div>
         )}
       </Card>

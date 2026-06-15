@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as PharmacistRouteImport } from './routes/pharmacist'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -19,6 +20,11 @@ import { Route as OwnerOnboardingRouteImport } from './routes/owner.onboarding'
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PharmacistRoute = PharmacistRouteImport.update({
+  id: '/pharmacist',
+  path: '/pharmacist',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/pharmacist': typeof PharmacistRoute
   '/search': typeof SearchRoute
   '/owner/onboarding': typeof OwnerOnboardingRoute
 }
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/pharmacist': typeof PharmacistRoute
   '/search': typeof SearchRoute
   '/owner/onboarding': typeof OwnerOnboardingRoute
 }
@@ -69,6 +77,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/pharmacist': typeof PharmacistRoute
   '/search': typeof SearchRoute
   '/owner/onboarding': typeof OwnerOnboardingRoute
 }
@@ -79,16 +88,25 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/dashboard'
+    | '/pharmacist'
     | '/search'
     | '/owner/onboarding'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/auth' | '/dashboard' | '/search' | '/owner/onboarding'
+  to:
+    | '/'
+    | '/admin'
+    | '/auth'
+    | '/dashboard'
+    | '/pharmacist'
+    | '/search'
+    | '/owner/onboarding'
   id:
     | '__root__'
     | '/'
     | '/admin'
     | '/auth'
     | '/dashboard'
+    | '/pharmacist'
     | '/search'
     | '/owner/onboarding'
   fileRoutesById: FileRoutesById
@@ -98,6 +116,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
   DashboardRoute: typeof DashboardRoute
+  PharmacistRoute: typeof PharmacistRoute
   SearchRoute: typeof SearchRoute
   OwnerOnboardingRoute: typeof OwnerOnboardingRoute
 }
@@ -109,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pharmacist': {
+      id: '/pharmacist'
+      path: '/pharmacist'
+      fullPath: '/pharmacist'
+      preLoaderRoute: typeof PharmacistRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -154,19 +180,10 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
   DashboardRoute: DashboardRoute,
+  PharmacistRoute: PharmacistRoute,
   SearchRoute: SearchRoute,
   OwnerOnboardingRoute: OwnerOnboardingRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

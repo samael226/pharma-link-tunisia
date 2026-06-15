@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TransfersRouteImport } from './routes/transfers'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as PharmacistRouteImport } from './routes/pharmacist'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -17,6 +18,11 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OwnerOnboardingRouteImport } from './routes/owner.onboarding'
 
+const TransfersRoute = TransfersRouteImport.update({
+  id: '/transfers',
+  path: '/transfers',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/pharmacist': typeof PharmacistRoute
   '/search': typeof SearchRoute
+  '/transfers': typeof TransfersRoute
   '/owner/onboarding': typeof OwnerOnboardingRoute
 }
 export interface FileRoutesByTo {
@@ -69,6 +76,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/pharmacist': typeof PharmacistRoute
   '/search': typeof SearchRoute
+  '/transfers': typeof TransfersRoute
   '/owner/onboarding': typeof OwnerOnboardingRoute
 }
 export interface FileRoutesById {
@@ -79,6 +87,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/pharmacist': typeof PharmacistRoute
   '/search': typeof SearchRoute
+  '/transfers': typeof TransfersRoute
   '/owner/onboarding': typeof OwnerOnboardingRoute
 }
 export interface FileRouteTypes {
@@ -90,6 +99,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/pharmacist'
     | '/search'
+    | '/transfers'
     | '/owner/onboarding'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/pharmacist'
     | '/search'
+    | '/transfers'
     | '/owner/onboarding'
   id:
     | '__root__'
@@ -108,6 +119,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/pharmacist'
     | '/search'
+    | '/transfers'
     | '/owner/onboarding'
   fileRoutesById: FileRoutesById
 }
@@ -118,11 +130,19 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   PharmacistRoute: typeof PharmacistRoute
   SearchRoute: typeof SearchRoute
+  TransfersRoute: typeof TransfersRoute
   OwnerOnboardingRoute: typeof OwnerOnboardingRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/transfers': {
+      id: '/transfers'
+      path: '/transfers'
+      fullPath: '/transfers'
+      preLoaderRoute: typeof TransfersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/search': {
       id: '/search'
       path: '/search'
@@ -182,6 +202,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   PharmacistRoute: PharmacistRoute,
   SearchRoute: SearchRoute,
+  TransfersRoute: TransfersRoute,
   OwnerOnboardingRoute: OwnerOnboardingRoute,
 }
 export const routeTree = rootRouteImport

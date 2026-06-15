@@ -13,6 +13,7 @@ import { Route as TransfersRouteImport } from './routes/transfers'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as PharmacistRouteImport } from './routes/pharmacist'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as BillingRouteImport } from './routes/billing'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -36,6 +37,11 @@ const PharmacistRoute = PharmacistRouteImport.update({
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BillingRoute = BillingRouteImport.update({
+  id: '/billing',
+  path: '/billing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -63,6 +69,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
+  '/billing': typeof BillingRoute
   '/dashboard': typeof DashboardRoute
   '/pharmacist': typeof PharmacistRoute
   '/search': typeof SearchRoute
@@ -73,6 +80,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
+  '/billing': typeof BillingRoute
   '/dashboard': typeof DashboardRoute
   '/pharmacist': typeof PharmacistRoute
   '/search': typeof SearchRoute
@@ -84,6 +92,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
+  '/billing': typeof BillingRoute
   '/dashboard': typeof DashboardRoute
   '/pharmacist': typeof PharmacistRoute
   '/search': typeof SearchRoute
@@ -96,6 +105,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/auth'
+    | '/billing'
     | '/dashboard'
     | '/pharmacist'
     | '/search'
@@ -106,6 +116,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/auth'
+    | '/billing'
     | '/dashboard'
     | '/pharmacist'
     | '/search'
@@ -116,6 +127,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/auth'
+    | '/billing'
     | '/dashboard'
     | '/pharmacist'
     | '/search'
@@ -127,6 +139,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
+  BillingRoute: typeof BillingRoute
   DashboardRoute: typeof DashboardRoute
   PharmacistRoute: typeof PharmacistRoute
   SearchRoute: typeof SearchRoute
@@ -164,6 +177,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/billing': {
+      id: '/billing'
+      path: '/billing'
+      fullPath: '/billing'
+      preLoaderRoute: typeof BillingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -199,6 +219,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
+  BillingRoute: BillingRoute,
   DashboardRoute: DashboardRoute,
   PharmacistRoute: PharmacistRoute,
   SearchRoute: SearchRoute,

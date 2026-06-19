@@ -1,0 +1,34 @@
+-- =========================================
+-- PRESCRIPTION STORAGE BUCKET SETUP
+-- =========================================
+-- NOTE: This migration documents the storage bucket setup.
+-- The 'prescriptions' bucket must be created manually via Supabase dashboard.
+-- 
+-- Steps to create the bucket:
+-- 1. Go to Supabase dashboard > Storage
+-- 2. Click "New bucket"
+-- 3. Name: prescriptions
+-- 4. Public: false
+-- 5. File size limit: 10MB
+-- 6. Allowed MIME types: image/jpeg, image/png, application/pdf
+-- 7. Click "Create bucket"
+--
+-- After creating the bucket, configure the following policies in the dashboard:
+--
+-- Policy 1: Patients can upload prescriptions
+-- Definition: bucket_id = 'prescriptions' AND (storage.foldername(name))[1] = auth.uid()::text
+-- Allowed operations: INSERT
+-- Allowed MIME types: image/jpeg, image/png, application/pdf
+-- Max file size: 10MB
+--
+-- Policy 2: Patients can view their prescriptions
+-- Definition: bucket_id = 'prescriptions' AND (storage.foldername(name))[1] = auth.uid()::text
+-- Allowed operations: SELECT
+--
+-- Policy 3: Branch staff can view prescriptions for their branch
+-- Definition: bucket_id = 'prescriptions' AND EXISTS (
+--   SELECT 1 FROM public.prescriptions p 
+--   WHERE p.file_url = storage.public_url() 
+--   AND public.is_branch_member(auth.uid(), p.branch_id)
+-- )
+-- Allowed operations: SELECT

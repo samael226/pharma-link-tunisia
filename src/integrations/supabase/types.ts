@@ -10,32 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.5"
-  }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
+    PostgrestVersion: "14.17"
   }
   public: {
     Tables: {
@@ -166,82 +141,6 @@ export type Database = {
           },
         ]
       }
-      deliveries: {
-        Row: {
-          assigned_to: string | null
-          branch_id: string
-          created_at: string
-          delivered_at: string | null
-          delivery_fee_tnd: number
-          id: string
-          notes: string | null
-          patient_address: string
-          patient_name: string
-          patient_phone: string | null
-          picked_up_at: string | null
-          prescription_id: string | null
-          reservation_id: string | null
-          status: Database["public"]["Enums"]["delivery_status"]
-          updated_at: string
-        }
-        Insert: {
-          assigned_to?: string | null
-          branch_id: string
-          created_at?: string
-          delivered_at?: string | null
-          delivery_fee_tnd?: number
-          id?: string
-          notes?: string | null
-          patient_address: string
-          patient_name: string
-          patient_phone?: string | null
-          picked_up_at?: string | null
-          prescription_id?: string | null
-          reservation_id?: string | null
-          status?: Database["public"]["Enums"]["delivery_status"]
-          updated_at?: string
-        }
-        Update: {
-          assigned_to?: string | null
-          branch_id?: string
-          created_at?: string
-          delivered_at?: string | null
-          delivery_fee_tnd?: number
-          id?: string
-          notes?: string | null
-          patient_address?: string
-          patient_name?: string
-          patient_phone?: string | null
-          picked_up_at?: string | null
-          prescription_id?: string | null
-          reservation_id?: string | null
-          status?: Database["public"]["Enums"]["delivery_status"]
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "deliveries_branch_id_fkey"
-            columns: ["branch_id"]
-            isOneToOne: false
-            referencedRelation: "branches"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "deliveries_prescription_id_fkey"
-            columns: ["prescription_id"]
-            isOneToOne: false
-            referencedRelation: "prescriptions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "deliveries_reservation_id_fkey"
-            columns: ["reservation_id"]
-            isOneToOne: false
-            referencedRelation: "reservations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       inventory: {
         Row: {
           batch_number: string | null
@@ -292,50 +191,6 @@ export type Database = {
             columns: ["medicine_id"]
             isOneToOne: false
             referencedRelation: "medicines"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      invoices: {
-        Row: {
-          amount_tnd: number
-          created_at: string
-          due_date: string
-          id: string
-          invoice_number: string
-          paid_at: string | null
-          pdf_url: string | null
-          status: string
-          subscription_id: string
-        }
-        Insert: {
-          amount_tnd: number
-          created_at?: string
-          due_date: string
-          id?: string
-          invoice_number: string
-          paid_at?: string | null
-          pdf_url?: string | null
-          status?: string
-          subscription_id: string
-        }
-        Update: {
-          amount_tnd?: number
-          created_at?: string
-          due_date?: string
-          id?: string
-          invoice_number?: string
-          paid_at?: string | null
-          pdf_url?: string | null
-          status?: string
-          subscription_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "invoices_subscription_id_fkey"
-            columns: ["subscription_id"]
-            isOneToOne: false
-            referencedRelation: "subscriptions"
             referencedColumns: ["id"]
           },
         ]
@@ -394,80 +249,6 @@ export type Database = {
         }
         Relationships: []
       }
-      notifications: {
-        Row: {
-          body: string
-          created_at: string
-          data: Json | null
-          id: string
-          status: Database["public"]["Enums"]["notification_status"]
-          title: string
-          type: Database["public"]["Enums"]["notification_type"]
-          user_id: string
-        }
-        Insert: {
-          body: string
-          created_at?: string
-          data?: Json | null
-          id?: string
-          status?: Database["public"]["Enums"]["notification_status"]
-          title: string
-          type: Database["public"]["Enums"]["notification_type"]
-          user_id: string
-        }
-        Update: {
-          body?: string
-          created_at?: string
-          data?: Json | null
-          id?: string
-          status?: Database["public"]["Enums"]["notification_status"]
-          title?: string
-          type?: Database["public"]["Enums"]["notification_type"]
-          user_id?: string
-        }
-        Relationships: []
-      }
-      payments: {
-        Row: {
-          amount_tnd: number
-          created_at: string
-          id: string
-          invoice_id: string
-          metadata: Json | null
-          payment_id: string | null
-          payment_method: string
-          status: string
-        }
-        Insert: {
-          amount_tnd: number
-          created_at?: string
-          id?: string
-          invoice_id: string
-          metadata?: Json | null
-          payment_id?: string | null
-          payment_method: string
-          status?: string
-        }
-        Update: {
-          amount_tnd?: number
-          created_at?: string
-          id?: string
-          invoice_id?: string
-          metadata?: Json | null
-          payment_id?: string | null
-          payment_method?: string
-          status?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "payments_invoice_id_fkey"
-            columns: ["invoice_id"]
-            isOneToOne: false
-            referencedRelation: "invoices"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       pharmacies: {
         Row: {
           contact_email: string | null
@@ -503,116 +284,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
-      }
-      prescription_items: {
-        Row: {
-          created_at: string
-          dosage: string | null
-          id: string
-          instructions: string | null
-          medicine_id: string | null
-          medicine_name: string
-          prescription_id: string
-          quantity: number
-        }
-        Insert: {
-          created_at?: string
-          dosage?: string | null
-          id?: string
-          instructions?: string | null
-          medicine_id?: string | null
-          medicine_name: string
-          prescription_id: string
-          quantity: number
-        }
-        Update: {
-          created_at?: string
-          dosage?: string | null
-          id?: string
-          instructions?: string | null
-          medicine_id?: string | null
-          medicine_name?: string
-          prescription_id?: string
-          quantity?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "prescription_items_medicine_id_fkey"
-            columns: ["medicine_id"]
-            isOneToOne: false
-            referencedRelation: "medicines"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "prescription_items_prescription_id_fkey"
-            columns: ["prescription_id"]
-            isOneToOne: false
-            referencedRelation: "prescriptions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      prescriptions: {
-        Row: {
-          branch_id: string
-          created_at: string
-          expires_at: string
-          file_name: string
-          file_size: number | null
-          file_type: string
-          file_url: string
-          id: string
-          notes: string | null
-          patient_id: string
-          rejection_reason: string | null
-          reviewed_at: string | null
-          reviewed_by: string | null
-          status: Database["public"]["Enums"]["prescription_status"]
-          updated_at: string
-        }
-        Insert: {
-          branch_id: string
-          created_at?: string
-          expires_at?: string
-          file_name: string
-          file_size?: number | null
-          file_type: string
-          file_url: string
-          id?: string
-          notes?: string | null
-          patient_id: string
-          rejection_reason?: string | null
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          status?: Database["public"]["Enums"]["prescription_status"]
-          updated_at?: string
-        }
-        Update: {
-          branch_id?: string
-          created_at?: string
-          expires_at?: string
-          file_name?: string
-          file_size?: number | null
-          file_type?: string
-          file_url?: string
-          id?: string
-          notes?: string | null
-          patient_id?: string
-          rejection_reason?: string | null
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          status?: Database["public"]["Enums"]["prescription_status"]
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "prescriptions_branch_id_fkey"
-            columns: ["branch_id"]
-            isOneToOne: false
-            referencedRelation: "branches"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       profiles: {
         Row: {
@@ -694,96 +365,6 @@ export type Database = {
             columns: ["medicine_id"]
             isOneToOne: false
             referencedRelation: "medicines"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      subscription_plans: {
-        Row: {
-          billing_interval: string
-          created_at: string
-          features: Json
-          id: string
-          is_active: boolean
-          max_branches: number
-          max_medicines: number
-          name: string
-          price_tnd: number
-          tier: Database["public"]["Enums"]["subscription_tier"]
-        }
-        Insert: {
-          billing_interval?: string
-          created_at?: string
-          features: Json
-          id?: string
-          is_active?: boolean
-          max_branches: number
-          max_medicines: number
-          name: string
-          price_tnd: number
-          tier: Database["public"]["Enums"]["subscription_tier"]
-        }
-        Update: {
-          billing_interval?: string
-          created_at?: string
-          features?: Json
-          id?: string
-          is_active?: boolean
-          max_branches?: number
-          max_medicines?: number
-          name?: string
-          price_tnd?: number
-          tier?: Database["public"]["Enums"]["subscription_tier"]
-        }
-        Relationships: []
-      }
-      subscriptions: {
-        Row: {
-          cancel_at_period_end: boolean
-          created_at: string
-          current_period_ends_at: string
-          id: string
-          pharmacy_id: string
-          plan_id: string
-          status: Database["public"]["Enums"]["subscription_status"]
-          trial_ends_at: string | null
-          updated_at: string
-        }
-        Insert: {
-          cancel_at_period_end?: boolean
-          created_at?: string
-          current_period_ends_at: string
-          id?: string
-          pharmacy_id: string
-          plan_id: string
-          status?: Database["public"]["Enums"]["subscription_status"]
-          trial_ends_at?: string | null
-          updated_at?: string
-        }
-        Update: {
-          cancel_at_period_end?: boolean
-          created_at?: string
-          current_period_ends_at?: string
-          id?: string
-          pharmacy_id?: string
-          plan_id?: string
-          status?: Database["public"]["Enums"]["subscription_status"]
-          trial_ends_at?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "subscriptions_pharmacy_id_fkey"
-            columns: ["pharmacy_id"]
-            isOneToOne: true
-            referencedRelation: "pharmacies"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "subscriptions_plan_id_fkey"
-            columns: ["plan_id"]
-            isOneToOne: false
-            referencedRelation: "subscription_plans"
             referencedColumns: ["id"]
           },
         ]
@@ -876,35 +457,6 @@ export type Database = {
     }
     Functions: {
       bootstrap_first_admin: { Args: never; Returns: boolean }
-      cancel_subscription: {
-        Args: { _subscription_id: string }
-        Returns: boolean
-      }
-      change_subscription_plan: {
-        Args: {
-          _new_plan_tier: Database["public"]["Enums"]["subscription_tier"]
-          _subscription_id: string
-        }
-        Returns: boolean
-      }
-      create_notification: {
-        Args: {
-          _body: string
-          _data?: Json
-          _title: string
-          _type: Database["public"]["Enums"]["notification_type"]
-          _user_id: string
-        }
-        Returns: string
-      }
-      create_subscription: {
-        Args: {
-          _pharmacy_id: string
-          _plan_tier: Database["public"]["Enums"]["subscription_tier"]
-        }
-        Returns: string
-      }
-      generate_invoice_number: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -931,35 +483,8 @@ export type Database = {
         | "pharmacy_owner"
         | "supplier"
         | "admin"
-      delivery_status:
-        | "pending"
-        | "assigned"
-        | "picked_up"
-        | "in_transit"
-        | "delivered"
-        | "cancelled"
       language_code: "fr" | "ar" | "en"
-      notification_status: "unread" | "read"
-      notification_type:
-        | "reservation_created"
-        | "reservation_confirmed"
-        | "reservation_ready"
-        | "transfer_requested"
-        | "transfer_approved"
-        | "prescription_uploaded"
-        | "prescription_approved"
-        | "prescription_rejected"
-        | "delivery_assigned"
-        | "delivery_picked_up"
-        | "delivery_delivered"
       pharmacy_status: "pending" | "approved" | "suspended" | "rejected"
-      prescription_status:
-        | "pending"
-        | "under_review"
-        | "approved"
-        | "rejected"
-        | "expired"
-        | "fulfilled"
       reservation_status:
         | "pending"
         | "confirmed"
@@ -967,13 +492,6 @@ export type Database = {
         | "fulfilled"
         | "cancelled"
         | "expired"
-      subscription_status:
-        | "trial"
-        | "active"
-        | "past_due"
-        | "cancelled"
-        | "expired"
-      subscription_tier: "free" | "starter" | "pro" | "enterprise"
       transfer_status:
         | "requested"
         | "approved"
@@ -996,12 +514,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1025,11 +543,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1050,11 +568,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1075,11 +593,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1092,11 +610,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1106,9 +624,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       app_role: [
@@ -1118,38 +633,8 @@ export const Constants = {
         "supplier",
         "admin",
       ],
-      delivery_status: [
-        "pending",
-        "assigned",
-        "picked_up",
-        "in_transit",
-        "delivered",
-        "cancelled",
-      ],
       language_code: ["fr", "ar", "en"],
-      notification_status: ["unread", "read"],
-      notification_type: [
-        "reservation_created",
-        "reservation_confirmed",
-        "reservation_ready",
-        "transfer_requested",
-        "transfer_approved",
-        "prescription_uploaded",
-        "prescription_approved",
-        "prescription_rejected",
-        "delivery_assigned",
-        "delivery_picked_up",
-        "delivery_delivered",
-      ],
       pharmacy_status: ["pending", "approved", "suspended", "rejected"],
-      prescription_status: [
-        "pending",
-        "under_review",
-        "approved",
-        "rejected",
-        "expired",
-        "fulfilled",
-      ],
       reservation_status: [
         "pending",
         "confirmed",
@@ -1158,14 +643,6 @@ export const Constants = {
         "cancelled",
         "expired",
       ],
-      subscription_status: [
-        "trial",
-        "active",
-        "past_due",
-        "cancelled",
-        "expired",
-      ],
-      subscription_tier: ["free", "starter", "pro", "enterprise"],
       transfer_status: [
         "requested",
         "approved",

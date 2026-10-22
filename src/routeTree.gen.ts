@@ -16,7 +16,6 @@ import { Route as PharmacistRouteImport } from './routes/pharmacist'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as DeliveryRouteImport } from './routes/delivery'
 import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as BillingRouteImport } from './routes/billing'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -58,11 +57,6 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BillingRoute = BillingRouteImport.update({
-  id: '/billing',
-  path: '/billing',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -93,7 +87,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
-  '/billing': typeof BillingRoute
   '/dashboard': typeof DashboardRoute
   '/delivery': typeof DeliveryRoute
   '/notifications': typeof NotificationsRoute
@@ -108,7 +101,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
-  '/billing': typeof BillingRoute
   '/dashboard': typeof DashboardRoute
   '/delivery': typeof DeliveryRoute
   '/notifications': typeof NotificationsRoute
@@ -124,7 +116,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
-  '/billing': typeof BillingRoute
   '/dashboard': typeof DashboardRoute
   '/delivery': typeof DeliveryRoute
   '/notifications': typeof NotificationsRoute
@@ -141,7 +132,6 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/auth'
-    | '/billing'
     | '/dashboard'
     | '/delivery'
     | '/notifications'
@@ -156,7 +146,6 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/auth'
-    | '/billing'
     | '/dashboard'
     | '/delivery'
     | '/notifications'
@@ -171,7 +160,6 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/auth'
-    | '/billing'
     | '/dashboard'
     | '/delivery'
     | '/notifications'
@@ -187,7 +175,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
-  BillingRoute: typeof BillingRoute
   DashboardRoute: typeof DashboardRoute
   DeliveryRoute: typeof DeliveryRoute
   NotificationsRoute: typeof NotificationsRoute
@@ -249,13 +236,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/billing': {
-      id: '/billing'
-      path: '/billing'
-      fullPath: '/billing'
-      preLoaderRoute: typeof BillingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -310,7 +290,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
-  BillingRoute: BillingRoute,
   DashboardRoute: DashboardRoute,
   DeliveryRoute: DeliveryRoute,
   NotificationsRoute: NotificationsRoute,

@@ -22,9 +22,6 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PharmacistPrescriptionsRouteImport } from './routes/pharmacist.prescriptions'
 import { Route as OwnerOnboardingRouteImport } from './routes/owner.onboarding'
-import { Route as BillingSubscriptionRouteImport } from './routes/billing.subscription'
-import { Route as BillingPaymentRouteImport } from './routes/billing.payment'
-import { Route as BillingInvoicesRouteImport } from './routes/billing.invoices'
 
 const TransfersRoute = TransfersRouteImport.update({
   id: '/transfers',
@@ -91,27 +88,12 @@ const OwnerOnboardingRoute = OwnerOnboardingRouteImport.update({
   path: '/owner/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BillingSubscriptionRoute = BillingSubscriptionRouteImport.update({
-  id: '/subscription',
-  path: '/subscription',
-  getParentRoute: () => BillingRoute,
-} as any)
-const BillingPaymentRoute = BillingPaymentRouteImport.update({
-  id: '/payment',
-  path: '/payment',
-  getParentRoute: () => BillingRoute,
-} as any)
-const BillingInvoicesRoute = BillingInvoicesRouteImport.update({
-  id: '/invoices',
-  path: '/invoices',
-  getParentRoute: () => BillingRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
-  '/billing': typeof BillingRouteWithChildren
+  '/billing': typeof BillingRoute
   '/dashboard': typeof DashboardRoute
   '/delivery': typeof DeliveryRoute
   '/notifications': typeof NotificationsRoute
@@ -119,9 +101,6 @@ export interface FileRoutesByFullPath {
   '/prescriptions': typeof PrescriptionsRoute
   '/search': typeof SearchRoute
   '/transfers': typeof TransfersRoute
-  '/billing/invoices': typeof BillingInvoicesRoute
-  '/billing/payment': typeof BillingPaymentRoute
-  '/billing/subscription': typeof BillingSubscriptionRoute
   '/owner/onboarding': typeof OwnerOnboardingRoute
   '/pharmacist/prescriptions': typeof PharmacistPrescriptionsRoute
 }
@@ -129,7 +108,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
-  '/billing': typeof BillingRouteWithChildren
+  '/billing': typeof BillingRoute
   '/dashboard': typeof DashboardRoute
   '/delivery': typeof DeliveryRoute
   '/notifications': typeof NotificationsRoute
@@ -137,9 +116,6 @@ export interface FileRoutesByTo {
   '/prescriptions': typeof PrescriptionsRoute
   '/search': typeof SearchRoute
   '/transfers': typeof TransfersRoute
-  '/billing/invoices': typeof BillingInvoicesRoute
-  '/billing/payment': typeof BillingPaymentRoute
-  '/billing/subscription': typeof BillingSubscriptionRoute
   '/owner/onboarding': typeof OwnerOnboardingRoute
   '/pharmacist/prescriptions': typeof PharmacistPrescriptionsRoute
 }
@@ -148,7 +124,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
-  '/billing': typeof BillingRouteWithChildren
+  '/billing': typeof BillingRoute
   '/dashboard': typeof DashboardRoute
   '/delivery': typeof DeliveryRoute
   '/notifications': typeof NotificationsRoute
@@ -156,9 +132,6 @@ export interface FileRoutesById {
   '/prescriptions': typeof PrescriptionsRoute
   '/search': typeof SearchRoute
   '/transfers': typeof TransfersRoute
-  '/billing/invoices': typeof BillingInvoicesRoute
-  '/billing/payment': typeof BillingPaymentRoute
-  '/billing/subscription': typeof BillingSubscriptionRoute
   '/owner/onboarding': typeof OwnerOnboardingRoute
   '/pharmacist/prescriptions': typeof PharmacistPrescriptionsRoute
 }
@@ -176,9 +149,6 @@ export interface FileRouteTypes {
     | '/prescriptions'
     | '/search'
     | '/transfers'
-    | '/billing/invoices'
-    | '/billing/payment'
-    | '/billing/subscription'
     | '/owner/onboarding'
     | '/pharmacist/prescriptions'
   fileRoutesByTo: FileRoutesByTo
@@ -194,9 +164,6 @@ export interface FileRouteTypes {
     | '/prescriptions'
     | '/search'
     | '/transfers'
-    | '/billing/invoices'
-    | '/billing/payment'
-    | '/billing/subscription'
     | '/owner/onboarding'
     | '/pharmacist/prescriptions'
   id:
@@ -212,9 +179,6 @@ export interface FileRouteTypes {
     | '/prescriptions'
     | '/search'
     | '/transfers'
-    | '/billing/invoices'
-    | '/billing/payment'
-    | '/billing/subscription'
     | '/owner/onboarding'
     | '/pharmacist/prescriptions'
   fileRoutesById: FileRoutesById
@@ -223,7 +187,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
-  BillingRoute: typeof BillingRouteWithChildren
+  BillingRoute: typeof BillingRoute
   DashboardRoute: typeof DashboardRoute
   DeliveryRoute: typeof DeliveryRoute
   NotificationsRoute: typeof NotificationsRoute
@@ -327,44 +291,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OwnerOnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/billing/subscription': {
-      id: '/billing/subscription'
-      path: '/subscription'
-      fullPath: '/billing/subscription'
-      preLoaderRoute: typeof BillingSubscriptionRouteImport
-      parentRoute: typeof BillingRoute
-    }
-    '/billing/payment': {
-      id: '/billing/payment'
-      path: '/payment'
-      fullPath: '/billing/payment'
-      preLoaderRoute: typeof BillingPaymentRouteImport
-      parentRoute: typeof BillingRoute
-    }
-    '/billing/invoices': {
-      id: '/billing/invoices'
-      path: '/invoices'
-      fullPath: '/billing/invoices'
-      preLoaderRoute: typeof BillingInvoicesRouteImport
-      parentRoute: typeof BillingRoute
-    }
   }
 }
-
-interface BillingRouteChildren {
-  BillingInvoicesRoute: typeof BillingInvoicesRoute
-  BillingPaymentRoute: typeof BillingPaymentRoute
-  BillingSubscriptionRoute: typeof BillingSubscriptionRoute
-}
-
-const BillingRouteChildren: BillingRouteChildren = {
-  BillingInvoicesRoute: BillingInvoicesRoute,
-  BillingPaymentRoute: BillingPaymentRoute,
-  BillingSubscriptionRoute: BillingSubscriptionRoute,
-}
-
-const BillingRouteWithChildren =
-  BillingRoute._addFileChildren(BillingRouteChildren)
 
 interface PharmacistRouteChildren {
   PharmacistPrescriptionsRoute: typeof PharmacistPrescriptionsRoute
@@ -382,7 +310,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
-  BillingRoute: BillingRouteWithChildren,
+  BillingRoute: BillingRoute,
   DashboardRoute: DashboardRoute,
   DeliveryRoute: DeliveryRoute,
   NotificationsRoute: NotificationsRoute,

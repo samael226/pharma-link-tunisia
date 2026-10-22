@@ -47,6 +47,104 @@ export type Database = {
         }
         Relationships: []
       }
+      billing_audit_logs: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          details: Json
+          id: string
+          pharmacy_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          details?: Json
+          id?: string
+          pharmacy_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          details?: Json
+          id?: string
+          pharmacy_id?: string | null
+        }
+        Relationships: []
+      }
+      billing_profiles: {
+        Row: {
+          address: string | null
+          city: string | null
+          country: string
+          created_at: string
+          email: string
+          legal_name: string
+          pharmacy_id: string
+          phone: string | null
+          postal_code: string | null
+          tax_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          country?: string
+          created_at?: string
+          email: string
+          legal_name: string
+          pharmacy_id: string
+          phone?: string | null
+          postal_code?: string | null
+          tax_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          country?: string
+          created_at?: string
+          email?: string
+          legal_name?: string
+          pharmacy_id?: string
+          phone?: string | null
+          postal_code?: string | null
+          tax_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "billing_profiles_pharmacy_id_fkey"
+            columns: ["pharmacy_id"]
+            isOneToOne: true
+            referencedRelation: "pharmacies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      billing_rate_limits: {
+        Row: {
+          action: string
+          count: number
+          user_id: string
+          window_start: string
+        }
+        Insert: {
+          action: string
+          count?: number
+          user_id: string
+          window_start: string
+        }
+        Update: {
+          action?: string
+          count?: number
+          user_id?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
       branch_staff: {
         Row: {
           branch_id: string
@@ -141,6 +239,81 @@ export type Database = {
           },
         ]
       }
+      coupon_redemptions: {
+        Row: {
+          coupon_id: string
+          created_at: string
+          id: string
+          pharmacy_id: string
+        }
+        Insert: {
+          coupon_id: string
+          created_at?: string
+          id?: string
+          pharmacy_id: string
+        }
+        Update: {
+          coupon_id?: string
+          created_at?: string
+          id?: string
+          pharmacy_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coupon_redemptions_coupon_id_fkey"
+            columns: ["coupon_id"]
+            isOneToOne: false
+            referencedRelation: "coupons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coupon_redemptions_pharmacy_id_fkey"
+            columns: ["pharmacy_id"]
+            isOneToOne: false
+            referencedRelation: "pharmacies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coupons: {
+        Row: {
+          code: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          kind: Database["public"]["Enums"]["coupon_type"]
+          max_redemptions: number | null
+          plan_codes: string[] | null
+          redemptions: number
+          value: number
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          kind: Database["public"]["Enums"]["coupon_type"]
+          max_redemptions?: number | null
+          plan_codes?: string[] | null
+          redemptions?: number
+          value: number
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          kind?: Database["public"]["Enums"]["coupon_type"]
+          max_redemptions?: number | null
+          plan_codes?: string[] | null
+          redemptions?: number
+          value?: number
+        }
+        Relationships: []
+      }
       inventory: {
         Row: {
           batch_number: string | null
@@ -191,6 +364,119 @@ export type Database = {
             columns: ["medicine_id"]
             isOneToOne: false
             referencedRelation: "medicines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoice_line_items: {
+        Row: {
+          amount_millimes: number
+          description: string
+          id: string
+          invoice_id: string
+          quantity: number
+          unit_millimes: number
+        }
+        Insert: {
+          amount_millimes: number
+          description: string
+          id?: string
+          invoice_id: string
+          quantity?: number
+          unit_millimes: number
+        }
+        Update: {
+          amount_millimes?: number
+          description?: string
+          id?: string
+          invoice_id?: string
+          quantity?: number
+          unit_millimes?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_line_items_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          created_at: string
+          currency: string
+          customer_snapshot: Json
+          discount_millimes: number
+          id: string
+          number: string
+          paid_at: string | null
+          period_end: string | null
+          period_start: string | null
+          pharmacy_id: string
+          plan_name: string | null
+          provider_invoice_id: string | null
+          status: Database["public"]["Enums"]["invoice_status"]
+          subscription_id: string | null
+          subtotal_millimes: number
+          tax_millimes: number
+          tax_rate: number
+          total_millimes: number
+        }
+        Insert: {
+          created_at?: string
+          currency?: string
+          customer_snapshot?: Json
+          discount_millimes?: number
+          id?: string
+          number?: string
+          paid_at?: string | null
+          period_end?: string | null
+          period_start?: string | null
+          pharmacy_id: string
+          plan_name?: string | null
+          provider_invoice_id?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"]
+          subscription_id?: string | null
+          subtotal_millimes?: number
+          tax_millimes?: number
+          tax_rate?: number
+          total_millimes?: number
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          customer_snapshot?: Json
+          discount_millimes?: number
+          id?: string
+          number?: string
+          paid_at?: string | null
+          period_end?: string | null
+          period_start?: string | null
+          pharmacy_id?: string
+          plan_name?: string | null
+          provider_invoice_id?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"]
+          subscription_id?: string | null
+          subtotal_millimes?: number
+          tax_millimes?: number
+          tax_rate?: number
+          total_millimes?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_pharmacy_id_fkey"
+            columns: ["pharmacy_id"]
+            isOneToOne: false
+            referencedRelation: "pharmacies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
             referencedColumns: ["id"]
           },
         ]
@@ -248,6 +534,110 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      payment_methods: {
+        Row: {
+          brand: string | null
+          created_at: string
+          exp_month: number | null
+          exp_year: number | null
+          id: string
+          is_default: boolean
+          kind: string
+          last4: string | null
+          pharmacy_id: string
+          provider: string
+          provider_method_id: string
+        }
+        Insert: {
+          brand?: string | null
+          created_at?: string
+          exp_month?: number | null
+          exp_year?: number | null
+          id?: string
+          is_default?: boolean
+          kind?: string
+          last4?: string | null
+          pharmacy_id: string
+          provider: string
+          provider_method_id: string
+        }
+        Update: {
+          brand?: string | null
+          created_at?: string
+          exp_month?: number | null
+          exp_year?: number | null
+          id?: string
+          is_default?: boolean
+          kind?: string
+          last4?: string | null
+          pharmacy_id?: string
+          provider?: string
+          provider_method_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_methods_pharmacy_id_fkey"
+            columns: ["pharmacy_id"]
+            isOneToOne: false
+            referencedRelation: "pharmacies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount_millimes: number
+          created_at: string
+          currency: string
+          failure_reason: string | null
+          id: string
+          invoice_id: string | null
+          pharmacy_id: string
+          provider: string
+          provider_payment_id: string | null
+          status: Database["public"]["Enums"]["payment_status"]
+        }
+        Insert: {
+          amount_millimes: number
+          created_at?: string
+          currency?: string
+          failure_reason?: string | null
+          id?: string
+          invoice_id?: string | null
+          pharmacy_id: string
+          provider: string
+          provider_payment_id?: string | null
+          status?: Database["public"]["Enums"]["payment_status"]
+        }
+        Update: {
+          amount_millimes?: number
+          created_at?: string
+          currency?: string
+          failure_reason?: string | null
+          id?: string
+          invoice_id?: string | null
+          pharmacy_id?: string
+          provider?: string
+          provider_payment_id?: string | null
+          status?: Database["public"]["Enums"]["payment_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_pharmacy_id_fkey"
+            columns: ["pharmacy_id"]
+            isOneToOne: false
+            referencedRelation: "pharmacies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       pharmacies: {
         Row: {
@@ -315,6 +705,79 @@ export type Database = {
         }
         Relationships: []
       }
+      promotions: {
+        Row: {
+          coupon_id: string | null
+          created_at: string
+          ends_at: string | null
+          id: string
+          is_active: boolean
+          starts_at: string
+          title: string
+        }
+        Insert: {
+          coupon_id?: string | null
+          created_at?: string
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          starts_at?: string
+          title: string
+        }
+        Update: {
+          coupon_id?: string | null
+          created_at?: string
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          starts_at?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "promotions_coupon_id_fkey"
+            columns: ["coupon_id"]
+            isOneToOne: false
+            referencedRelation: "coupons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      refunds: {
+        Row: {
+          amount_millimes: number
+          created_at: string
+          id: string
+          payment_id: string
+          provider_refund_id: string | null
+          reason: string | null
+        }
+        Insert: {
+          amount_millimes: number
+          created_at?: string
+          id?: string
+          payment_id: string
+          provider_refund_id?: string | null
+          reason?: string | null
+        }
+        Update: {
+          amount_millimes?: number
+          created_at?: string
+          id?: string
+          payment_id?: string
+          provider_refund_id?: string | null
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "refunds_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reservations: {
         Row: {
           branch_id: string
@@ -368,6 +831,207 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      subscription_history: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          from_plan_id: string | null
+          from_status: Database["public"]["Enums"]["subscription_status"] | null
+          id: string
+          pharmacy_id: string
+          reason: string | null
+          subscription_id: string
+          to_plan_id: string | null
+          to_status: Database["public"]["Enums"]["subscription_status"]
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          from_plan_id?: string | null
+          from_status?:
+            | Database["public"]["Enums"]["subscription_status"]
+            | null
+          id?: string
+          pharmacy_id: string
+          reason?: string | null
+          subscription_id: string
+          to_plan_id?: string | null
+          to_status: Database["public"]["Enums"]["subscription_status"]
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          from_plan_id?: string | null
+          from_status?:
+            | Database["public"]["Enums"]["subscription_status"]
+            | null
+          id?: string
+          pharmacy_id?: string
+          reason?: string | null
+          subscription_id?: string
+          to_plan_id?: string | null
+          to_status?: Database["public"]["Enums"]["subscription_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_history_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscription_plans: {
+        Row: {
+          code: string
+          created_at: string
+          currency: string
+          description: string | null
+          features: string[]
+          id: string
+          interval: string
+          is_active: boolean
+          max_branches: number | null
+          max_employees: number | null
+          name: string
+          price_millimes: number
+          sort_order: number
+          stripe_price_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          currency?: string
+          description?: string | null
+          features?: string[]
+          id?: string
+          interval?: string
+          is_active?: boolean
+          max_branches?: number | null
+          max_employees?: number | null
+          name: string
+          price_millimes: number
+          sort_order?: number
+          stripe_price_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          currency?: string
+          description?: string | null
+          features?: string[]
+          id?: string
+          interval?: string
+          is_active?: boolean
+          max_branches?: number | null
+          max_employees?: number | null
+          name?: string
+          price_millimes?: number
+          sort_order?: number
+          stripe_price_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          cancel_at_period_end: boolean
+          cancelled_at: string | null
+          coupon_id: string | null
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
+          grace_ends_at: string | null
+          id: string
+          pharmacy_id: string
+          plan_id: string
+          provider: string
+          provider_customer_id: string | null
+          provider_subscription_id: string | null
+          status: Database["public"]["Enums"]["subscription_status"]
+          trial_ends_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          cancel_at_period_end?: boolean
+          cancelled_at?: string | null
+          coupon_id?: string | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          grace_ends_at?: string | null
+          id?: string
+          pharmacy_id: string
+          plan_id: string
+          provider?: string
+          provider_customer_id?: string | null
+          provider_subscription_id?: string | null
+          status?: Database["public"]["Enums"]["subscription_status"]
+          trial_ends_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cancel_at_period_end?: boolean
+          cancelled_at?: string | null
+          coupon_id?: string | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          grace_ends_at?: string | null
+          id?: string
+          pharmacy_id?: string
+          plan_id?: string
+          provider?: string
+          provider_customer_id?: string | null
+          provider_subscription_id?: string | null
+          status?: Database["public"]["Enums"]["subscription_status"]
+          trial_ends_at?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_pharmacy_id_fkey"
+            columns: ["pharmacy_id"]
+            isOneToOne: true
+            referencedRelation: "pharmacies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tax_config: {
+        Row: {
+          country: string
+          id: string
+          name: string
+          rate: number
+          updated_at: string
+        }
+        Insert: {
+          country: string
+          id?: string
+          name: string
+          rate: number
+          updated_at?: string
+        }
+        Update: {
+          country?: string
+          id?: string
+          name?: string
+          rate?: number
+          updated_at?: string
+        }
+        Relationships: []
       }
       transfers: {
         Row: {
@@ -430,6 +1094,41 @@ export type Database = {
           },
         ]
       }
+      usage_metrics: {
+        Row: {
+          id: string
+          metric: string
+          period: string
+          pharmacy_id: string
+          quantity: number
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          metric: string
+          period?: string
+          pharmacy_id: string
+          quantity?: number
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          metric?: string
+          period?: string
+          pharmacy_id?: string
+          quantity?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usage_metrics_pharmacy_id_fkey"
+            columns: ["pharmacy_id"]
+            isOneToOne: false
+            referencedRelation: "pharmacies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -451,12 +1150,35 @@ export type Database = {
         }
         Relationships: []
       }
+      webhook_events: {
+        Row: {
+          id: string
+          received_at: string
+          type: string
+        }
+        Insert: {
+          id: string
+          received_at?: string
+          type: string
+        }
+        Update: {
+          id?: string
+          received_at?: string
+          type?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
       bootstrap_first_admin: { Args: never; Returns: boolean }
+      effective_plan_code: { Args: { _pharmacy: string }; Returns: string }
+      has_feature: {
+        Args: { _feature: string; _pharmacy: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -464,9 +1186,22 @@ export type Database = {
         }
         Returns: boolean
       }
+      hit_rate_limit: {
+        Args: { _action: string; _max: number }
+        Returns: boolean
+      }
       is_branch_member: {
         Args: { _branch_id: string; _user_id: string }
         Returns: boolean
+      }
+      is_pharmacy_owner: {
+        Args: { _pharmacy: string; _user: string }
+        Returns: boolean
+      }
+      plan_limit: { Args: { _key: string; _pharmacy: string }; Returns: number }
+      record_usage: {
+        Args: { _metric: string; _pharmacy: string; _qty?: number }
+        Returns: undefined
       }
       set_pharmacy_status: {
         Args: {
@@ -483,7 +1218,10 @@ export type Database = {
         | "pharmacy_owner"
         | "supplier"
         | "admin"
+      coupon_type: "percent" | "fixed" | "free_months"
+      invoice_status: "draft" | "open" | "paid" | "void" | "uncollectible"
       language_code: "fr" | "ar" | "en"
+      payment_status: "pending" | "succeeded" | "failed" | "refunded"
       pharmacy_status: "pending" | "approved" | "suspended" | "rejected"
       reservation_status:
         | "pending"
@@ -492,6 +1230,15 @@ export type Database = {
         | "fulfilled"
         | "cancelled"
         | "expired"
+      subscription_status:
+        | "trial"
+        | "active"
+        | "past_due"
+        | "suspended"
+        | "cancelled"
+        | "expired"
+        | "pending_payment"
+        | "grace_period"
       transfer_status:
         | "requested"
         | "approved"
@@ -633,7 +1380,10 @@ export const Constants = {
         "supplier",
         "admin",
       ],
+      coupon_type: ["percent", "fixed", "free_months"],
+      invoice_status: ["draft", "open", "paid", "void", "uncollectible"],
       language_code: ["fr", "ar", "en"],
+      payment_status: ["pending", "succeeded", "failed", "refunded"],
       pharmacy_status: ["pending", "approved", "suspended", "rejected"],
       reservation_status: [
         "pending",
@@ -642,6 +1392,16 @@ export const Constants = {
         "fulfilled",
         "cancelled",
         "expired",
+      ],
+      subscription_status: [
+        "trial",
+        "active",
+        "past_due",
+        "suspended",
+        "cancelled",
+        "expired",
+        "pending_payment",
+        "grace_period",
       ],
       transfer_status: [
         "requested",
